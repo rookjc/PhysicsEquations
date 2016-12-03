@@ -1,5 +1,7 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -12,19 +14,24 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class NodeDisplay extends JFrame {
+	static Rectangle dimensions;
 	
 	public static class Nodes extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
 		static LinkedList<Node> nodes = new LinkedList<>();
+		static Font font;
 
 		@Override
         protected void paintComponent(Graphics g) {
-        	//Main.print("drawing");
+        	Main.print("drawing");
+			
             super.paintComponent(g);
+            g.setColor(Color.BLACK);
+            g.fillRect(200, 200, 200, 200);
             
             for (Node n : nodes) {
-            	n.draw(g, Main.font);
+            	n.draw(g, font, dimensions);
             }
 		}
 	}
@@ -35,6 +42,7 @@ public class NodeDisplay extends JFrame {
 	private JLabel label;
 
 	public NodeDisplay(String title) {
+		Nodes.font = new Font("Serif", Font.PLAIN, 20);
 		createComponents();
 		setSize(600, 600);
 		setTitle(title);
@@ -67,13 +75,8 @@ public class NodeDisplay extends JFrame {
 		this.addComponentListener(new ComponentListener() {
 			// Maintains the window dimension variable
 		    public void componentResized(ComponentEvent event) {
-		    	if (window != null) {
-			    	Main.dimensions = window.getBounds();
-			    	
-			    	for (Node n : Nodes.nodes) {
-		            	n.resize();
-		            }
-		    	}
+		    	if (window != null)
+			    	Nodes.dimensions = window.getBounds();
 		    }
 		    
 		    // Extra methods unused for now

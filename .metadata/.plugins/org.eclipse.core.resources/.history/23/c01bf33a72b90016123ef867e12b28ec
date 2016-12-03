@@ -7,7 +7,7 @@ public class Main {
 	public static Font font;
 	
 	public static void main(String[] args) {
-		font = new Font("Serif", Font.PLAIN, 20000);
+		font = new Font("Serif", Font.PLAIN, 20);
 		window = new NodeDisplay("Testing");
 	}
 	

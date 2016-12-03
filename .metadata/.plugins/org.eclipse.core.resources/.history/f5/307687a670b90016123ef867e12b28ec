@@ -8,27 +8,19 @@ public class VariableNode implements Node {
 	private Color color;
 	private String label;
 	private Ellipse2D.Double node;
-	private double x, y, r;
 	
 	public VariableNode(Color c, String l, double x, double y, double r) {
-		color = c; label = l; this.x = x; this.y = y; this.r = r;
-		resize();
+		color = c; label = l;
+		node = new Ellipse2D.Double(x, y, r * 2, r * 2);
 	}
 
 	@Override
-	public void draw(Graphics g, Font f) {
+	public void draw(Graphics g, Font f, Rectangle dim) {
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(color);
 		g2.fill(node);
 		g2.setColor(Color.BLACK);
-		g2.drawString(label, (int) node.getCenterX(), (int) node.getCenterY());
-	}
-	
-	// Scales the circle (position only) to compensate for resized window
-	@Override
-	public void resize() {
-		node = new Ellipse2D.Double(x * Main.dimensions.getWidth(), y * Main.dimensions.getHeight(),
-				r * 2, r * 2);
+		g2.drawString(label, (int) node.x, (int) node.y);
 	}
 	
 }
