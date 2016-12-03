@@ -1,0 +1,31 @@
+import java.awt.Color;
+import java.awt.Graphics;
+
+public class Edge {
+	Color color;
+	// If a node end is null, the mouse pointer is used instead
+	Node end1; // the variable end
+	Node end2; // the equation end
+	
+	public Edge(Color c, Node n1, Node n2) {
+		color = c; end1 = n1; end2 = n2;
+	}
+	
+	public void draw(Graphics g) {
+		g.setColor(color);
+		int x1, y1, x2, y2;
+		if (end1 == null)
+		g.drawLine(x1, y1, x2, y2);
+	}
+	
+	public void drawEndDrag(Graphics g, int mouseX, int mouseY) {
+		if (end1 == null)
+			draw(g, mouseX, mouseY, end2.endpointX(), end2.endpointY());
+		else
+			draw(g, end1.endpointX(), end1.endpointY(), mouseX, mouseY);
+	}
+	
+	private void draw(Graphics g, int x1, int y1, int x2, int y2) {
+		
+	}
+}

@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
@@ -7,4 +8,7 @@ public interface Node {
 	public boolean contains(int x, int y);
 	public void move(int dx, int dy);
 	public void finishMove();
+	public int endpointX();
+	public int endpointY();
+	public Color getColor();
 }

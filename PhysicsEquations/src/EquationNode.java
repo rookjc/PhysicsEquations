@@ -53,4 +53,18 @@ public class EquationNode implements Node {
 		y = node.getMinY() / Main.dimensions.getHeight();
 	}
 
+	@Override
+	public int endpointX() {
+		return (int)node.getCenterX();
+	}
+	
+	@Override
+	public int endpointY() {
+		return (int)node.getCenterY();
+	}
+	
+	@Override
+	public Color getColor() {
+		return color;
+	}
 }

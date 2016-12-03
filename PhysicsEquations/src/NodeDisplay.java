@@ -12,18 +12,22 @@ import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+//import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class NodeDisplay extends JFrame implements MouseListener, MouseMotionListener {
 	boolean dragging;
 	Node dragNode;
-	int handleX, handleY;
+	static Edge dragWire;
+	static int handleX, handleY;
+	
+	Tool tool = Tool.NODE;
 	
 	public static class Nodes extends JPanel {
 		private static final long serialVersionUID = 1L;
 		
 		static LinkedList<Node> nodes = new LinkedList<>();
+		static LinkedList<Edge> edges = new LinkedList<>();
 
 		@Override
         protected void paintComponent(Graphics g) {
@@ -31,6 +35,13 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
             super.paintComponent(g);
             g.setFont(Main.font);
             FontMetrics fm = g.getFontMetrics(Main.font);
+            
+            for (Edge e : edges) {
+            	if (e == dragWire)
+            		e.drawEndDrag(g, handleX, handleY);
+            	else
+            		e.draw(g);
+            }
             
             for (Node n : nodes) {
             	n.draw(g, fm);
@@ -43,7 +54,10 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 	
 	private JButton addVar;
 	private JButton addEq;
-	private JLabel label;
+	private JButton wireTool;
+	private JButton nodeTool;
+	private JButton deleteTool;
+	//private JLabel label;
 
 	public NodeDisplay(String title) {
 		createComponents();
@@ -54,16 +68,20 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		setVisible(true);
 	}
 	
+	// Very long, messy method to make buttons at the top (and their basic functions)
 	private void createComponents() {
 		JPanel panel = new Nodes();
 		addVar = new JButton("Add Variable");
 		addEq = new JButton("Add Equation");
+		wireTool = new JButton("Wiring Tool");
+		nodeTool = new JButton("Node Tool");
+		deleteTool = new JButton("Delete Tool");
 		
 		addVar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				Nodes.nodes.add(new VariableNode(Color.CYAN, "x",
-						Math.random(), Math.random(), Main.scale));
+						Math.random() * 0.8, Math.random() * 0.8, Main.scale));
 				repaint();
 			}
 		});
@@ -72,18 +90,52 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				Nodes.nodes.add(new EquationNode(Color.LIGHT_GRAY, "y = 5x + 6",
-						Math.random() * 0.5, Math.random() * 0.5, Main.scale * 1.5));
+						Math.random() * 0.8, Math.random() * 0.8, Main.scale * 1.5));
 				repaint();
 			}
 		});
 		
-		label = new JLabel("unneeded label :)");
+		wireTool.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				addVar.setVisible(false);
+				addEq.setVisible(false);
+				tool = Tool.WIRE;
+				panel.setBackground(Color.GRAY);
+			}
+		});
+		
+		nodeTool.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				addVar.setVisible(true);
+				addEq.setVisible(true);
+				tool = Tool.NODE;
+				panel.setBackground(Color.WHITE);
+			}
+		});
+		
+		deleteTool.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				addVar.setVisible(false);
+				addEq.setVisible(false);
+				tool = Tool.DELETE;
+				panel.setBackground(new Color(127, 60, 60));
+			}
+		});
+		
+		//label = new JLabel("unneeded label :)");
 		panel.add(addVar);
 		panel.add(addEq);
-		panel.add(label);
+		panel.add(nodeTool);
+		panel.add(wireTool);
+		panel.add(deleteTool);
+		//panel.add(label);
 		panel.addMouseListener(this);
 		panel.addMouseMotionListener(this);
 		
+		panel.setBackground(Color.WHITE);
 		add(panel);
 	}
 	
@@ -115,34 +167,88 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (dragging) { // implies non-null dragNode
+		if (!dragging)
+			return;
+		switch (tool) {
+		case NODE:
 			dragNode.move(e.getX() - handleX, e.getY() - handleY);
 			repaint();
+			break;
+		case WIRE:
+			handleX = e.getX();
+			handleY = e.getY();
+			repaint();
+			break;
+		case DELETE:
+			break;
 		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
-		for (Node n : Nodes.nodes){
-			if (n.contains(x, y)) {
+		Node n;
+		switch (tool) {
+		case NODE:
+			// Set up parameters for dragging a node (if mouse is over one)
+			n = getNode(e);
+			if (n != null) {
 				dragNode = n;
 				dragging = true;
-				handleX = x;
-				handleY = y;
-				return;
+				handleX = e.getX();
+				handleY = e.getY();
 			}
+			break;
+		case WIRE:
+			// Create a wire anchored on the node clicked, with the mouse controlling the other end
+			n = getNode(e);
+			if (n != null) {
+				dragging = true;
+				if (n instanceof VariableNode)
+					dragWire = new Edge(n.getColor(), n, null);
+				else
+					dragWire = new Edge(n.getColor(), null, n);
+				Nodes.edges.add(dragWire);
+				dragNode = n;
+			}
+			break;
+		case DELETE:
+			
+			break;
 		}
+	}
+	
+	// Get the node the mouse is over in the specified event
+	private Node getNode(MouseEvent e) {
+		for (Node n : Nodes.nodes) {
+			if (n.contains(e.getX(), e.getY()))
+				return n;
+		}
+		return null;
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (dragging) {
-			dragging = false;
+		if (!dragging)
+			return;
+		switch (tool) {
+		case NODE:
 			dragNode.finishMove();
 			dragNode = null;
+			break;
+		case WIRE:
+			Node n = getNode(e);
+			if (n == null || n.getClass().equals(dragNode.getClass()))
+				Nodes.edges.remove(dragWire);
+			else
+				dragWire.assignEnd(n);
+			dragWire = null;
+			dragNode = null;
+			repaint();
+			break;
+		case DELETE:
+			break;
 		}
+		dragging = false;
 	}
 
 	@Override

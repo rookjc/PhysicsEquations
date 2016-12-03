@@ -1,0 +1,11 @@
+import java.awt.Color;
+
+public class Edge {
+	Color color;
+	Node end1; // the variable end
+	Node end2; // the equation end
+	
+	public Edge(Color c, Node n1, Node n2) {
+		color = c; end1 = n1; end2 = n2;
+	}
+}

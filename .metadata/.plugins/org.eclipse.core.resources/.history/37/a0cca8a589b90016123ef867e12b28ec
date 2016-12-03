@@ -1,0 +1,69 @@
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Ellipse2D;
+
+public class VariableNode implements Node {
+	private Color color;
+	private String label;
+	private Ellipse2D.Double node;
+	private double x, y, r;
+	
+	public VariableNode(Color c, String l, double x, double y, double r) {
+		color = c; label = l; this.x = x; this.y = y; this.r = r;
+		resize();
+	}
+
+	@Override
+	public void draw(Graphics g, FontMetrics fm) {
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setColor(color);
+		g2.fill(node);
+		g2.setColor(Color.BLACK);
+		
+		//center String/text
+        int cx = (int) (node.getCenterX() - fm.stringWidth(label) / 2);
+        int cy = (int) (node.getCenterY() - fm.getHeight() / 2 + fm.getAscent());
+		
+		g2.drawString(label, cx, cy);
+	}
+	
+	// Scales the circle (position only) to compensate for resized window
+	@Override
+	public void resize() {
+		node = new Ellipse2D.Double(x * Main.dimensions.getWidth(), y * Main.dimensions.getHeight(),
+				r * 2, r * 2);
+	}
+
+	@Override
+	public boolean contains(int x, int y) {
+		return node.contains(x, y);
+	}
+
+	// Changes the circle node to a moved version, but keeps x and y the same as before the move
+	@Override
+	public void move(int dx, int dy) {
+		node = new Ellipse2D.Double(x * Main.dimensions.getWidth() + dx,
+				y * Main.dimensions.getHeight() + dy, r * 2, r * 2);
+	}
+
+	// Completes the move by setting x and y to the new values
+	@Override
+	public void finishMove() {
+		x = node.getMinX() / Main.dimensions.getWidth();
+		y = node.getMinY() / Main.dimensions.getHeight();
+	}
+	
+	@Override
+	public String toString() {
+		return x + ", " + y;
+	}
+
+	@Override
+	public Point getEndPoint() {
+		return new Point(node.getCenterX(), node.getCenterY());
+	}
+	
+}

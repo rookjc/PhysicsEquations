@@ -1,0 +1,195 @@
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.LinkedList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class NodeDisplay extends JFrame implements MouseListener, MouseMotionListener {
+	boolean dragging;
+	Node dragNode;
+	int handleX, handleY;
+	
+	boolean inWiring = false;
+	
+	public static class Nodes extends JPanel {
+		private static final long serialVersionUID = 1L;
+		
+		static LinkedList<Node> nodes = new LinkedList<>();
+
+		@Override
+        protected void paintComponent(Graphics g) {
+        	//Main.print("drawing");
+            super.paintComponent(g);
+            g.setFont(Main.font);
+            FontMetrics fm = g.getFontMetrics(Main.font);
+            
+            for (Node n : nodes) {
+            	n.draw(g, fm);
+            }
+		}
+
+	}
+	
+	private static final long serialVersionUID = 1L;
+	
+	private JButton addVar;
+	private JButton addEq;
+	private JButton wireTool;
+	private JButton nodeTool;
+	//private JLabel label;
+
+	public NodeDisplay(String title) {
+		createComponents();
+		setSize(600, 600);
+		setTitle(title);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		createResizeListener(this);
+		setVisible(true);
+	}
+	
+	// Very long, messy method to make buttons at the top (and their basic functions)
+	private void createComponents() {
+		JPanel panel = new Nodes();
+		addVar = new JButton("Add Variable");
+		addEq = new JButton("Add Equation");
+		wireTool = new JButton("Wiring...");
+		nodeTool = new JButton("Exit wiring");
+		
+		addVar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Nodes.nodes.add(new VariableNode(Color.CYAN, "x",
+						Math.random(), Math.random(), Main.scale));
+				repaint();
+			}
+		});
+		
+		addEq.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Nodes.nodes.add(new EquationNode(Color.LIGHT_GRAY, "y = 5x + 6",
+						Math.random() * 0.5, Math.random() * 0.5, Main.scale * 1.5));
+				repaint();
+			}
+		});
+		
+		wireTool.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				addVar.setVisible(false);
+				addEq.setVisible(false);
+				wireTool.setVisible(false);
+				nodeTool.setVisible(true);
+				inWiring = true;
+				panel.setBackground(Color.GRAY);
+			}
+		});
+		
+		nodeTool.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				addVar.setVisible(true);
+				addEq.setVisible(true);
+				wireTool.setVisible(true);
+				nodeTool.setVisible(false);
+				inWiring = false;
+				panel.setBackground(Color.WHITE);
+			}
+		});
+		nodeTool.setVisible(false);
+		
+		//label = new JLabel("unneeded label :)");
+		panel.add(addVar);
+		panel.add(addEq);
+		panel.add(wireTool);
+		panel.add(nodeTool);
+		//panel.add(label);
+		panel.addMouseListener(this);
+		panel.addMouseMotionListener(this);
+		
+		add(panel);
+	}
+	
+	// Adds a listener to maintain a variable for the window dimensions
+	private void createResizeListener(NodeDisplay window) {
+		this.addComponentListener(new ComponentListener() {
+			// Maintains the window dimension variable
+		    public void componentResized(ComponentEvent event) {
+		    	if (window != null) {
+			    	Main.dimensions = window.getBounds();
+			    	
+			    	for (Node n : Nodes.nodes) {
+		            	n.resize();
+		            }
+		    	}
+		    }
+		    
+		    // Extra methods unused for now
+			@Override
+			public void componentHidden(ComponentEvent arg0) {}
+			@Override
+			public void componentMoved(ComponentEvent arg0) {}
+			@Override
+			public void componentShown(ComponentEvent arg0) {}
+		});
+	}
+
+		
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		if (dragging) { // implies non-null dragNode
+			dragNode.move(e.getX() - handleX, e.getY() - handleY);
+			repaint();
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (inWiring) {
+			// Set up parameters for dragging a wire
+			
+		} else {
+			// Set up parameters for dragging a node (if mouse is over one)
+			int x = e.getX();
+			int y = e.getY();
+			for (Node n : Nodes.nodes){
+				if (n.contains(x, y)) {
+					dragNode = n;
+					dragging = true;
+					handleX = x;
+					handleY = y;
+					return;
+				}
+			} // end for
+		} // end else
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (dragging) {
+			dragging = false;
+			dragNode.finishMove();
+			dragNode = null;
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {}
+
+	
+}
