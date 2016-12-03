@@ -1,0 +1,6 @@
+import javax.swing.JFrame;
+
+public class NodeDisplay extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
+}

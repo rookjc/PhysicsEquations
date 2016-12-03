@@ -1,0 +1,15 @@
+import javax.swing.JFrame;
+
+public class Main {
+
+	public static void main(String[] args) {
+		@SuppressWarnings("unused")
+		JFrame frame = new NodeDisplay("Testing");
+	}
+	
+	// Easy print method for debugging
+	public static void print(Object... obs) {
+		for (Object ob : obs)
+			System.out.println(ob);
+	}
+}
