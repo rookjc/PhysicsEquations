@@ -1,1 +1,1 @@
-# PhysicsEquations
+An attempt to represent common physics problems as a graph of variables and equations. Hopefully, a path from input variabless to a desired solution variable can then be obtained from a modified graph traversal.
