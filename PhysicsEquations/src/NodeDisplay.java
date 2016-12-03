@@ -5,8 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -14,7 +15,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class NodeDisplay extends JFrame {
+public class NodeDisplay extends JFrame implements MouseListener, MouseMotionListener {
+	boolean dragging;
+	Node dragNode;
+	int handleX, handleY;
 	
 	public static class Nodes extends JPanel {
 		private static final long serialVersionUID = 1L;
@@ -32,21 +36,7 @@ public class NodeDisplay extends JFrame {
             	n.draw(g, fm);
             }
 		}
-		
-		// Create a mouse listener
-		public void initListener() {
-			this.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    Main.print("pressed");
-                }
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    Main.print("Released");
-                }
-            });
-		}
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -79,7 +69,9 @@ public class NodeDisplay extends JFrame {
 		label = new JLabel("unneeded label :)");
 		panel.add(button);
 		panel.add(label);
-		((Nodes)panel).initListener();
+		panel.addMouseListener(this);
+		panel.addMouseMotionListener(this);
+		
 		add(panel);
 	}
 	
@@ -106,6 +98,51 @@ public class NodeDisplay extends JFrame {
 			public void componentShown(ComponentEvent arg0) {}
 		});
 	}
+
+		
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		if (dragging) { // implies non-null dragNode
+			dragNode.move(e.getX() - handleX, e.getY() - handleY);
+			repaint();
+			Main.print("moving", e.getX() - handleX, e.getY() - handleY);
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		for (Node n : Nodes.nodes){
+			if (n.contains(x, y)) {
+				dragNode = n;
+				dragging = true;
+				handleX = x;
+				handleY = y;
+				Main.print("found one");
+				return;
+			}
+		}
+		
+		if (Nodes.nodes.size() > 0)
+			Main.print(Nodes.nodes.get(0));
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (dragging) {
+			dragging = false;
+			dragNode.finishMove();
+			dragNode = null;
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {}
 
 	
 }

@@ -35,5 +35,29 @@ public class VariableNode implements Node {
 		node = new Ellipse2D.Double(x * Main.dimensions.getWidth(), y * Main.dimensions.getHeight(),
 				r * 2, r * 2);
 	}
+
+	@Override
+	public boolean contains(int x, int y) {
+		return node.contains(x, y);
+	}
+
+	// Changes the circle node to a moved version, but keeps x and y the same as before the move
+	@Override
+	public void move(int dx, int dy) {
+		node = new Ellipse2D.Double(x * Main.dimensions.getWidth() + dx,
+				y * Main.dimensions.getHeight() + dy, r * 2, r * 2);
+	}
+
+	// Completes the move by setting x and y to the new values
+	@Override
+	public void finishMove() {
+		x = node.getMinX() / Main.dimensions.getWidth();
+		y = node.getMinY() / Main.dimensions.getHeight();
+	}
+	
+	@Override
+	public String toString() {
+		return x + ", " + y;
+	}
 	
 }

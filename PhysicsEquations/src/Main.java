@@ -1,4 +1,5 @@
 import java.awt.Font;
+import java.awt.MouseInfo;
 import java.awt.Rectangle;
 
 public class Main {
@@ -11,6 +12,7 @@ public class Main {
 	public static void main(String[] args) {
 		font = new Font("Serif", Font.BOLD, scale);
 		window = new NodeDisplay("Testing");
+		print(MouseInfo.getPointerInfo().getLocation());
 	}
 	
 	// Easy print method for debugging
