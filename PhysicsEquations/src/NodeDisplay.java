@@ -1,9 +1,12 @@
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -22,10 +25,27 @@ public class NodeDisplay extends JFrame {
         protected void paintComponent(Graphics g) {
         	//Main.print("drawing");
             super.paintComponent(g);
+            g.setFont(Main.font);
+            FontMetrics fm = g.getFontMetrics(Main.font);
             
             for (Node n : nodes) {
-            	n.draw(g, Main.font);
+            	n.draw(g, fm);
             }
+		}
+		
+		// Create a mouse listener
+		public void initListener() {
+			this.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    Main.print("pressed");
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    Main.print("Released");
+                }
+            });
 		}
 	}
 	
@@ -51,7 +71,7 @@ public class NodeDisplay extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				Nodes.nodes.add(new VariableNode(Color.CYAN, "x",
-						Math.random(), Math.random(), 40));
+						Math.random(), Math.random(), Main.scale));
 				repaint();
 			}
 		});
@@ -59,6 +79,7 @@ public class NodeDisplay extends JFrame {
 		label = new JLabel("unneeded label :)");
 		panel.add(button);
 		panel.add(label);
+		((Nodes)panel).initListener();
 		add(panel);
 	}
 	
@@ -85,5 +106,6 @@ public class NodeDisplay extends JFrame {
 			public void componentShown(ComponentEvent arg0) {}
 		});
 	}
+
 	
 }
