@@ -1,0 +1,16 @@
+import java.util.Stack;
+
+public class Expression {
+	// To be overridden
+	boolean canEvaluate() {
+		return false;
+	}
+	// To be overridden
+	double evaluate() {
+		return 0;
+	}
+	
+	public static Expression parse(String s) {
+		Stack<Expression> stack = new Stack<>();
+	}
+}

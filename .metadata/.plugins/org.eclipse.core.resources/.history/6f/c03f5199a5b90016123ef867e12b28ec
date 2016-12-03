@@ -1,0 +1,24 @@
+import java.util.Stack;
+import java.util.regex.Pattern;
+
+public class Expression {
+	
+	// To be overridden
+	boolean canEvaluate() {
+		return false;
+	}
+	// To be overridden
+	double evaluate() {
+		return 0;
+	}
+	
+	public static Expression parse(String s) {
+		Stack<Expression> stack = new Stack<>();
+		while (!s.isEmpty()) {
+			Matcher m = p.matcher(s);
+			if (m.matches) {
+				
+			}
+		}
+	}
+}

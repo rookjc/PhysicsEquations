@@ -86,8 +86,11 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		addVar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Nodes.nodes.add(new VariableNode(Color.CYAN, "unknown", "x",
-						Math.random() * 0.8, Math.random() * 0.8, Main.scale));
+				String lbl = Main.getNextAvailableName();
+				Node newNode = new VariableNode(Main.randomColor(), "unknown", lbl,
+						Math.random() * 0.8, Math.random() * 0.8, Main.scale);
+				Nodes.nodes.add(newNode);
+				Main.names.put(lbl, (VariableNode)newNode);
 				repaint();
 			}
 		});
@@ -282,6 +285,9 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			n = getNode(e);
 			if (n != null) {
 				Nodes.nodes.remove(n);
+				if (n instanceof VariableNode) {
+					Main.names.remove(((VariableNode) n).getSymbol());
+				}
 				LinkedList<Edge> toRemove = new LinkedList<>();
 				for (Edge edge : Nodes.edges) {
 					if (edge.end1 == n || edge.end2 == n)

@@ -1,0 +1,10 @@
+
+public class Variable extends Expression {
+	String symbol;
+	boolean known;
+	
+	@Override
+	public boolean canEvaluate() {
+		return known || Main.canFind(symbol);
+	}
+}

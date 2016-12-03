@@ -6,12 +6,12 @@ import java.awt.geom.Ellipse2D;
 
 public class VariableNode implements Node {
 	private Color color;
-	private String name, label;
+	private String name, label, value;
 	private Ellipse2D.Double node;
 	private double x, y, r;
 	
 	public VariableNode(Color c, String n, String l, double x, double y, double r) {
-		color = c; name = n; label = l; this.x = x; this.y = y; this.r = r;
+		color = c; name = n; label = l; value = "0"; this.x = x; this.y = y; this.r = r;
 		resize();
 	}
 
@@ -78,7 +78,12 @@ public class VariableNode implements Node {
 	// Gives "variablename (symbol)"
 	@Override
 	public String getLabel() {
-		return name + " (" + label + ")";
+		return name + "(" + label + "){" + value + "}";
+	}
+	
+	// Yes, this is horrible design.
+	public String getSymbol() {
+		return label;
 	}
 	
 	public void setLabel(String l) {
@@ -87,6 +92,19 @@ public class VariableNode implements Node {
 	
 	public void setName(String n) {
 		this.name = n;
+	}
+	
+	public void setValue(String s) {
+		this.value = s;
+	}
+	
+	// For now, just return 0 if it's an unknown.
+	public double getValue() {
+		return isKnown() ? Double.parseDouble(value) : 0;
+	}
+	
+	public boolean isKnown() {
+		return !value.contains("?");
 	}
 	
 }

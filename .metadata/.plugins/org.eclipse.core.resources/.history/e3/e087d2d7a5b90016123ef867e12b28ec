@@ -1,0 +1,17 @@
+
+public class Constant extends Expression {
+	double value;
+	
+	@Override
+	public boolean canEvaluate() {
+		return true;
+	}
+	@Override
+	public double evaluate() {
+		return 0;
+	}
+	
+	public Constant(double value) {
+		this.value = value;
+	}
+}

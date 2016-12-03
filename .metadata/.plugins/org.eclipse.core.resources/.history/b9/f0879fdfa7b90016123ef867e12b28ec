@@ -1,0 +1,17 @@
+
+public class Addition extends Expression {
+	private Expression left, right;
+	
+	@Override
+	public boolean canEvaluate() {
+		return true;
+	}
+	@Override
+	public double evaluate() {
+		return value;
+	}
+	
+	public Addition(Expression l, Expression r) {
+		left = l; right = r;
+	}
+}

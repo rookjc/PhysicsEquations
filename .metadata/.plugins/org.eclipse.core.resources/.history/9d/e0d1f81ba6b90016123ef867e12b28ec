@@ -1,0 +1,23 @@
+import java.util.Stack;
+import java.util.regex.Pattern;
+
+public class Expression {
+	
+	// To be overridden
+	public boolean canEvaluate() {
+		return false;
+	}
+	// To be overridden
+	public double evaluate() {
+		return 0;
+	}
+	
+	public static Expression parse(String s) {
+		Stack<Expression> stack = new Stack<>();
+		for (char c : s.toCharArray()) {
+			if (c >= '0' && c <= '9') {
+				stack.push(new Constant(c - 48));
+			}
+		}
+	}
+}

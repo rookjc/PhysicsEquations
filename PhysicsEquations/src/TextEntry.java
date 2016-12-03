@@ -12,7 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class TextEntry extends JFrame {
-	private static Pattern varLabelMatch = Pattern.compile("(.*)\\((.{1,3})\\)");
+	private static final long serialVersionUID = 1L;
+	private static Pattern varLabelMatch = Pattern.compile("(.*)\\(([a-z|A-Z])\\)\\s*\\{([\\?0-9]+\\.?[0-9]*)\\}");
 	
 	public TextEntry(String title, int sizeX, int sizeY, Node subject) {
 		createComponents(this, subject);
@@ -44,18 +45,33 @@ public class TextEntry extends JFrame {
 					if (!m.matches()) {
 						JOptionPane.showMessageDialog(null, "Parse error.", "Parse Error", JOptionPane.ERROR_MESSAGE);
 					} else {
-						((VariableNode)subject).setName(m.group(1));
-						((VariableNode)subject).setLabel(m.group(2));
+						String oldName = ((VariableNode)subject).getSymbol();
+						String newName = m.group(2);
+						if (Main.names.containsKey(newName) && !newName.equals(oldName)) {
+							JOptionPane.showMessageDialog(null, "Already a variable called '" + newName + "'",
+									"Name Already Exists", JOptionPane.ERROR_MESSAGE);
+						} else {
+							((VariableNode)subject).setName(m.group(1));
+							((VariableNode)subject).setLabel(m.group(2));
+							((VariableNode)subject).setValue(m.group(3));
+							frame.dispose();
+							Main.names.remove(oldName);
+							Main.names.put(newName, (VariableNode)subject);
+							Main.window.repaint();
+						}
+					}
+				} else {
+					Equation eq = Equation.parse(input.getText());
+					if (eq == null) {
+						JOptionPane.showMessageDialog(null, "Parse error.", "Parse Error", JOptionPane.ERROR_MESSAGE);
+					} else {
+						((EquationNode)subject).resetWidth();
+						((EquationNode)subject).setLabel(input.getText());
 						frame.dispose();
 						Main.window.repaint();
 					}
-				} else {
-					((EquationNode)subject).resetWidth();
-					((EquationNode)subject).setLabel(input.getText());
-					frame.dispose();
-					Main.window.repaint();
-				}
-			}
+				} // end main if
+			} // end actionPerformed
 		});
 		
 		bottom.add(input);

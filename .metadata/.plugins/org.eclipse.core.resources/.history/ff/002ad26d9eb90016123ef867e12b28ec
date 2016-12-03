@@ -1,0 +1,28 @@
+import java.awt.Font;
+import java.awt.MouseInfo;
+import java.awt.Rectangle;
+
+public class Main {
+	public static int scale = 40;
+	
+	public static NodeDisplay window;
+	public static Rectangle dimensions;
+	public static Font font;
+	
+	public static void main(String[] args) {
+		font = new Font("Serif", Font.BOLD, scale);
+		window = new NodeDisplay("Testing");
+		print(MouseInfo.getPointerInfo().getLocation());
+	}
+	
+	// Easy print method for debugging
+	public static void print(Object... obs) {
+		for (Object ob : obs)
+			System.out.println(ob);
+	}
+	
+	public static Color randomColor() {
+		return new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255));
+	}
+	
+}

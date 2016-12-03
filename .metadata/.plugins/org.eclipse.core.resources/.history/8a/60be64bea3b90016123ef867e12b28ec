@@ -1,0 +1,11 @@
+
+public class Equation {
+	Expression left;
+	Expression right;
+	
+	private Equation() {}
+	
+	public static parse(String s) {
+		
+	}
+}

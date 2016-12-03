@@ -1,0 +1,4 @@
+
+public class BinaryExpression extends Expression {
+
+}

@@ -1,0 +1,6 @@
+
+public class Expression {
+	boolean canEvaluate() {	
+	}
+	double evaluate();
+}

@@ -1,0 +1,14 @@
+
+public class Equation {
+	Expression left;
+	Expression right;
+	
+	private Equation() {}
+	
+	// Parse string into equation. Return null if problem.
+	public static Equation parse(String s) {
+		s.replaceAll("\\s", "");
+		int equals = s.indexOf('=');
+		
+	}
+}
