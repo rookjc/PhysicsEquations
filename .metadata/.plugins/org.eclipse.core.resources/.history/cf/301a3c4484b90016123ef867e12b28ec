@@ -72,8 +72,7 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				Nodes.nodes.add(new EquationNode(Color.LIGHT_GRAY, "y = 5x + 6",
-						Math.random() * 0.5, Math.random() * 0.5, Main.scale * 1.5));
-				repaint();
+						Math.random() * 0.5, Math.random() * 0.5, Main.scale * 0.75));
 			}
 		});
 		

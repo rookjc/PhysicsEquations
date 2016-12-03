@@ -1,0 +1,57 @@
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+
+public class EquationNode implements Node {
+	private Color color;
+	private String label;
+	private Rectangle node;
+	private double x, y, w, h;
+	
+	public EquationNode(Color c, String l, double x, double y, double h) {
+		color = c; label = l; this.x = x; this.y = y; this.w = 0; this.h = h;
+	}
+
+	@Override
+	public void draw(Graphics g, FontMetrics fm) {
+		// Done only once: if w hasn't been truly set, find it using the fm provided here
+		if (w == 0) {
+			w = fm.stringWidth(label) + 25;
+			resize();
+		}
+		
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setColor(color);
+		g2.fill(node);
+		g2.setColor(Color.BLACK);
+		g2.drawString("", (int)(x * Main.dimensions.getWidth() + 5),
+				(int)(y * Main.dimensions.getHeight() + (h - fm.getHeight()) / 2 + fm.getAscent()));
+	}
+
+	@Override
+	public void resize() {
+		node = new Rectangle((int) (x * Main.dimensions.getWidth()), (int) (y * Main.dimensions.getHeight()),
+				(int) w, (int) h);
+	}
+
+	@Override
+	public boolean contains(int x, int y) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void move(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void finishMove() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

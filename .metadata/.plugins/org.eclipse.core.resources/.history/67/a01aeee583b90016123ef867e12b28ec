@@ -57,7 +57,6 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 	private void createComponents() {
 		JPanel panel = new Nodes();
 		addVar = new JButton("Add Variable");
-		addEq = new JButton("Add Equation");
 		
 		addVar.addActionListener(new ActionListener() {
 			@Override
@@ -68,18 +67,8 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			}
 		});
 		
-		addEq.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				Nodes.nodes.add(new EquationNode(Color.LIGHT_GRAY, "y = 5x + 6",
-						Math.random() * 0.5, Math.random() * 0.5, Main.scale * 1.5));
-				repaint();
-			}
-		});
-		
 		label = new JLabel("unneeded label :)");
 		panel.add(addVar);
-		panel.add(addEq);
 		panel.add(label);
 		panel.addMouseListener(this);
 		panel.addMouseMotionListener(this);
