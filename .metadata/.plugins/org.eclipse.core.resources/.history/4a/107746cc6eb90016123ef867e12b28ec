@@ -19,8 +19,8 @@ public class NodeDisplay extends JFrame {
 	public static class Nodes extends JPanel {
 		private static final long serialVersionUID = 1L;
 
-		static LinkedList<Node> nodes = new LinkedList<>();
-		static Font font;
+		LinkedList<Node> nodes = new LinkedList<>();
+		Font font;
 
 		@Override
         protected void paintComponent(Graphics g) {
@@ -29,7 +29,7 @@ public class NodeDisplay extends JFrame {
             g.fillRect(200, 200, 200, 200);
             
             for (Node n : nodes) {
-            	n.draw(g, font);
+            	
             }
 		}
 	}

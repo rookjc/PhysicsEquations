@@ -1,0 +1,22 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+public class VariableNode implements Node {
+	private Color c;
+	private String label;
+	
+	public VariableNode(Color c, String l, Rectangle r) {
+		super(c, l, r);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+
+}

@@ -1,0 +1,17 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+public class Node {
+	public Color color;
+	public String label;
+	public Rectangle rect;
+	
+	public Node(Color c, String l, Rectangle r) {
+		color = c;
+		label = l;
+		rect = r;
+	}
+	
+	public abstract void draw(Graphics g) {}
+}

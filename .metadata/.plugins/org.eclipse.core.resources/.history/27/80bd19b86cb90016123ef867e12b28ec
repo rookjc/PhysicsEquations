@@ -1,0 +1,11 @@
+import java.awt.Color;
+import java.awt.Rectangle;
+
+public class VariableNode extends Node {
+
+	public VariableNode(Color c, String l, Rectangle r) {
+		super(c, l, r);
+		// TODO Auto-generated constructor stub
+	}
+
+}

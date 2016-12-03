@@ -15,22 +15,17 @@ import javax.swing.JPanel;
 
 public class NodeDisplay extends JFrame {
 	Rectangle dimensions;
+	LinkedList<Node> nodes = new LinkedList<>();
+	Font font;
 	
 	public static class Nodes extends JPanel {
 		private static final long serialVersionUID = 1L;
-
-		static LinkedList<Node> nodes = new LinkedList<>();
-		static Font font;
 
 		@Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.setColor(Color.BLACK);
             g.fillRect(200, 200, 200, 200);
-            
-            for (Node n : nodes) {
-            	n.draw(g, font);
-            }
 		}
 	}
 	
@@ -40,7 +35,7 @@ public class NodeDisplay extends JFrame {
 	private JLabel label;
 
 	public NodeDisplay(String title) {
-		Nodes.font = new Font("Serif", Font.PLAIN, 20);
+		font = new Font("Serif", Font.PLAIN, 20);
 		createComponents();
 		setSize(600, 600);
 		setTitle(title);
