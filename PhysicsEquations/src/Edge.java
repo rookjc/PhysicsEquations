@@ -39,4 +39,9 @@ public class Edge {
 		} else
 			end2 = n;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return (o instanceof Edge && ((Edge)o).end1 == this.end1 && ((Edge)o).end2 == this.end2);
+	}
 }

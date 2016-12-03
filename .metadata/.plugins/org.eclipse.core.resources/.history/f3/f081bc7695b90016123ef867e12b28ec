@@ -1,0 +1,38 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class TextEntry extends JFrame {
+	public TextEntry(String title, int sizeX, int sizeY) {
+		createComponents(this);
+		setSize(sizeX, sizeY);
+		setTitle(title);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
+	}
+	
+	private JButton OK;
+	private JButton cancel;
+	private JTextField input;
+	
+	private void createComponents(JFrame frame) {
+		JPanel panel = new JPanel();
+		
+		OK = new JButton("OK");
+		cancel = new JButton("Cancel");
+		
+		cancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
+		
+		panel.add(OK);
+		panel.add(cancel);
+	}
+}

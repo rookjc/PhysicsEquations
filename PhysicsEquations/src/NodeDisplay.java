@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -20,6 +21,7 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 	Node dragNode;
 	static Edge dragWire;
 	static int handleX, handleY;
+	TextEntry editWindow = null;
 	
 	Tool tool = Tool.NODE;
 	
@@ -57,30 +59,34 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 	private JButton wireTool;
 	private JButton nodeTool;
 	private JButton deleteTool;
+	private JButton editTool;
 	//private JLabel label;
 
 	public NodeDisplay(String title) {
 		createComponents();
-		setSize(600, 600);
+		setSize(1500, 1000);
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		createResizeListener(this);
 		setVisible(true);
 	}
 	
-	// Very long, messy method to make buttons at the top (and their basic functions)
+	// Very long, messy method to make buttons at the top / bottom (and their basic functions)
 	private void createComponents() {
+		JPanel top = new JPanel();
+		JPanel bottom = new JPanel();
 		JPanel panel = new Nodes();
 		addVar = new JButton("Add Variable");
 		addEq = new JButton("Add Equation");
 		wireTool = new JButton("Wiring Tool");
-		nodeTool = new JButton("Node Tool");
+		nodeTool = new JButton("Move Tool");
 		deleteTool = new JButton("Delete Tool");
+		editTool = new JButton("Edit Tool");
 		
 		addVar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Nodes.nodes.add(new VariableNode(Color.CYAN, "x",
+				Nodes.nodes.add(new VariableNode(Color.CYAN, "unknown", "x",
 						Math.random() * 0.8, Math.random() * 0.8, Main.scale));
 				repaint();
 			}
@@ -98,8 +104,6 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		wireTool.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				addVar.setVisible(false);
-				addEq.setVisible(false);
 				tool = Tool.WIRE;
 				panel.setBackground(Color.GRAY);
 			}
@@ -108,8 +112,6 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		nodeTool.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				addVar.setVisible(true);
-				addEq.setVisible(true);
 				tool = Tool.NODE;
 				panel.setBackground(Color.WHITE);
 			}
@@ -118,25 +120,35 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		deleteTool.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				addVar.setVisible(false);
-				addEq.setVisible(false);
 				tool = Tool.DELETE;
 				panel.setBackground(new Color(127, 60, 60));
 			}
 		});
 		
+		editTool.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				tool = Tool.EDIT;
+				panel.setBackground(new Color(200, 150, 0));
+			}
+		});
+		
 		//label = new JLabel("unneeded label :)");
-		panel.add(addVar);
-		panel.add(addEq);
-		panel.add(nodeTool);
-		panel.add(wireTool);
-		panel.add(deleteTool);
+		bottom.add(addVar);
+		bottom.add(addEq);
+		
+		top.add(nodeTool);
+		top.add(wireTool);
+		top.add(deleteTool);
+		top.add(editTool);
 		//panel.add(label);
 		panel.addMouseListener(this);
 		panel.addMouseMotionListener(this);
 		
 		panel.setBackground(Color.WHITE);
 		add(panel);
+		add(top, BorderLayout.NORTH);
+		add(bottom, BorderLayout.SOUTH);
 	}
 	
 	// Adds a listener to maintain a variable for the window dimensions
@@ -181,6 +193,8 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			break;
 		case DELETE:
 			break;
+		case EDIT:
+			break;
 		}
 	}
 
@@ -214,6 +228,8 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		case DELETE:
 			
 			break;
+		case EDIT:
+			break;
 		}
 	}
 	
@@ -239,22 +255,64 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			Node n = getNode(e);
 			if (n == null || n.getClass().equals(dragNode.getClass()))
 				Nodes.edges.remove(dragWire);
-			else
+			else {
 				dragWire.assignEnd(n);
+				for (Edge edge : Nodes.edges) {
+					if (edge != dragWire && edge.equals(dragWire))
+						Nodes.edges.remove(dragWire);
+				}
+			}
 			dragWire = null;
 			dragNode = null;
 			repaint();
 			break;
 		case DELETE:
 			break;
+		default:
+			break;
 		}
 		dragging = false;
 	}
 
+
+	public void mouseClicked(MouseEvent e) {
+		Node n;
+		switch (tool) {
+		case DELETE:
+			n = getNode(e);
+			if (n != null) {
+				Nodes.nodes.remove(n);
+				LinkedList<Edge> toRemove = new LinkedList<>();
+				for (Edge edge : Nodes.edges) {
+					if (edge.end1 == n || edge.end2 == n)
+						toRemove.add(edge);
+				}
+				Nodes.edges.removeAll(toRemove);
+				repaint();
+			} else {
+				// check for edge to delete (somehow...)
+			}
+			break;
+		case EDIT:
+			if (editWindow != null) {
+				editWindow.dispose();
+				editWindow = null;
+			}
+			n = getNode(e);
+			if (n != null) {
+				editWindow = new TextEntry(n instanceof VariableNode ? "Edit variable" : "Edit equation",
+						Main.scale * 30, Main.scale * 4, n);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {}
 	public void mouseMoved(MouseEvent e) {}
 
 	

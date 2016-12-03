@@ -11,4 +11,5 @@ public interface Node {
 	public int endpointX();
 	public int endpointY();
 	public Color getColor();
+	public String getLabel();
 }

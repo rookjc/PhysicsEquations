@@ -16,7 +16,7 @@ public class EquationNode implements Node {
 
 	@Override
 	public void draw(Graphics g, FontMetrics fm) {
-		// Done only once: if w hasn't been truly set, find it using the fm provided here
+		// Done only after text updated: if w is flagged at 0, find the real value using the fm provided here
 		if (w == 0) {
 			w = fm.stringWidth(label) + Main.scale * 0.5;
 			resize();
@@ -29,7 +29,9 @@ public class EquationNode implements Node {
 		g2.drawString(label, (int)(node.getMinX() + Main.scale * 0.25),
 				(int)(node.getMinY() + (h - fm.getHeight()) / 2 + fm.getAscent()));
 	}
-
+	
+	public void resetWidth() { w = 0; }
+	
 	@Override
 	public void resize() {
 		node = new Rectangle((int) (x * Main.dimensions.getWidth()), (int) (y * Main.dimensions.getHeight()),
@@ -66,5 +68,14 @@ public class EquationNode implements Node {
 	@Override
 	public Color getColor() {
 		return color;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
+	}
+	
+	public void setLabel(String label) {
+		this.label = label;
 	}
 }

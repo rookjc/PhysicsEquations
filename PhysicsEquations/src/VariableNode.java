@@ -6,12 +6,12 @@ import java.awt.geom.Ellipse2D;
 
 public class VariableNode implements Node {
 	private Color color;
-	private String label;
+	private String name, label;
 	private Ellipse2D.Double node;
 	private double x, y, r;
 	
-	public VariableNode(Color c, String l, double x, double y, double r) {
-		color = c; label = l; this.x = x; this.y = y; this.r = r;
+	public VariableNode(Color c, String n, String l, double x, double y, double r) {
+		color = c; name = n; label = l; this.x = x; this.y = y; this.r = r;
 		resize();
 	}
 
@@ -73,6 +73,20 @@ public class VariableNode implements Node {
 	@Override
 	public Color getColor() {
 		return color;
+	}
+	
+	// Gives "variablename (symbol)"
+	@Override
+	public String getLabel() {
+		return name + " (" + label + ")";
+	}
+	
+	public void setLabel(String l) {
+		this.label = l;
+	}
+	
+	public void setName(String n) {
+		this.name = n;
 	}
 	
 }
