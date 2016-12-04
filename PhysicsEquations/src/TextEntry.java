@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+// Represents entering and parsing text, for the specific cases of editing variable / equation nodes
 public class TextEntry extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private static Pattern varLabelMatch = Pattern.compile("(.*)\\(([a-z|A-Z])\\)\\s*\\{([\\?0-9]+\\.?[0-9]*)\\}");
@@ -67,8 +68,15 @@ public class TextEntry extends JFrame {
 					} else {
 						((EquationNode)subject).resetWidth();
 						((EquationNode)subject).setLabel(input.getText());
+						((EquationNode)subject).setValid();
+						((EquationNode)subject).equation = eq;
+						
+						// Change the equation's connections to be representative:
+						Main.updateEdges((EquationNode)subject, eq);
+						
 						frame.dispose();
 						Main.window.repaint();
+						Main.window.repaint(); // Needed twice, since the EquationNode's size changes the first time
 					}
 				} // end main if
 			} // end actionPerformed

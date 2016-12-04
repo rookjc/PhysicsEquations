@@ -1,1 +1,1 @@
-public enum Tool {NODE, WIRE, DELETE, EDIT}
+public enum Tool {NODE, WIRE, DELETE, EDIT, EVALUATE}

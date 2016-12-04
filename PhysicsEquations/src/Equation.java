@@ -4,14 +4,15 @@ import java.util.Set;
 public class Equation {
 	Expression left;
 	Expression right;
+	Set<String> variables;
 	
-	private Equation() {}
+	private Equation() {
+		variables = new HashSet<>();
+	}
 	
 	// Parse string into equation. Return null if problem.
 	public static Equation parse(String s) {
-		Set<String> variables = new HashSet<>();
-		
-		s.replaceAll("\\s", "");
+		s = s.replaceAll("\\s", "");
 		int equals = s.indexOf('=');
 		Equation result = new Equation();
 		result.left = Expression.parse(s.substring(0, equals));
@@ -20,8 +21,8 @@ public class Equation {
 		if (result.left == null || result.right == null)
 			return null; // parse error
 		
-		variables.addAll(result.left.variables);
-		variables.addAll(result.right.variables);
+		result.variables.addAll(result.left.variables);
+		result.variables.addAll(result.right.variables);
 		
 		return result;
 	}

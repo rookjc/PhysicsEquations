@@ -5,13 +5,18 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class EquationNode implements Node {
-	private Color color;
+	private static final Color VALID_COLOR = Color.LIGHT_GRAY;
+	private static final Color INVALID_COLOR = Color.MAGENTA;
+	
+	private boolean valid;
 	private String label;
 	private Rectangle node;
 	private double x, y, w, h;
 	
-	public EquationNode(Color c, String l, double x, double y, double h) {
-		color = c; label = l; this.x = x; this.y = y; this.w = 0; this.h = h;
+	public Equation equation;
+	
+	public EquationNode(String l, double x, double y, double h) {
+		valid = true; label = l; this.x = x; this.y = y; this.w = 0; this.h = h;
 	}
 
 	@Override
@@ -23,7 +28,7 @@ public class EquationNode implements Node {
 		}
 		
 		Graphics2D g2 = (Graphics2D)g;
-		g2.setColor(color);
+		g2.setColor(getColor());
 		g2.fill(node);
 		g2.setColor(Color.BLACK);
 		g2.drawString(label, (int)(node.getMinX() + Main.scale * 0.25),
@@ -67,7 +72,7 @@ public class EquationNode implements Node {
 	
 	@Override
 	public Color getColor() {
-		return color;
+		return valid ? VALID_COLOR : INVALID_COLOR;
 	}
 
 	@Override
@@ -77,5 +82,17 @@ public class EquationNode implements Node {
 	
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public void setInvalid() {
+		valid = false;
+	}
+	
+	public void setValid() {
+		valid = true;
+	}
+	
+	public boolean isValid() {
+		return valid;
 	}
 }

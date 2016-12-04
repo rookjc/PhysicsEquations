@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 //import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -60,6 +61,7 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 	private JButton nodeTool;
 	private JButton deleteTool;
 	private JButton editTool;
+	private JButton evaluateTool;
 	//private JLabel label;
 
 	public NodeDisplay(String title) {
@@ -76,19 +78,20 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		JPanel top = new JPanel();
 		JPanel bottom = new JPanel();
 		JPanel panel = new Nodes();
-		addVar = new JButton("Add Variable");
-		addEq = new JButton("Add Equation");
-		wireTool = new JButton("Wiring Tool");
-		nodeTool = new JButton("Move Tool");
-		deleteTool = new JButton("Delete Tool");
-		editTool = new JButton("Edit Tool");
+		addVar = new JButton("Add Variable"); addVar.setFont(Main.font);
+		addEq = new JButton("Add Equation"); addEq.setFont(Main.font);
+		wireTool = new JButton("Wiring Tool"); wireTool.setFont(Main.font);
+		nodeTool = new JButton("Move Tool"); nodeTool.setFont(Main.font);
+		deleteTool = new JButton("Delete Tool"); deleteTool.setFont(Main.font);
+		editTool = new JButton("Edit Tool"); editTool.setFont(Main.font);
+		evaluateTool = new JButton("Evaluate"); evaluateTool.setFont(Main.font);
 		
 		addVar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				String lbl = Main.getNextAvailableName();
 				Node newNode = new VariableNode(Main.randomColor(), "unknown", lbl,
-						Math.random() * 0.8, Math.random() * 0.8, Main.scale);
+						Math.random() * 0.9, Math.random() * 0.7, Main.scale);
 				Nodes.nodes.add(newNode);
 				Main.names.put(lbl, (VariableNode)newNode);
 				repaint();
@@ -98,8 +101,8 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		addEq.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Nodes.nodes.add(new EquationNode(Color.LIGHT_GRAY, "y = 5x + 6",
-						Math.random() * 0.8, Math.random() * 0.8, Main.scale * 1.5));
+				Nodes.nodes.add(new EquationNode("0 = 0",
+						Math.random() * 0.9, Math.random() * 0.7, Main.scale * 1.5));
 				repaint();
 			}
 		});
@@ -136,14 +139,35 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			}
 		});
 		
+		evaluateTool.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				boolean valid = true;
+				for (Node n : Nodes.nodes) {
+					if (n instanceof EquationNode && !((EquationNode)n).isValid()) {
+						valid = false;
+						break;
+					}
+				}
+				if (valid) { // Only switch to evaluate tool if all equations are okay
+					tool = Tool.EVALUATE;
+					panel.setBackground(new Color(90, 128, 110));
+				} else {
+					JOptionPane.showMessageDialog(null, "Cannot enter evaluation mode if there are invalid equations.",
+							"Invalid Equation(s)", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
 		//label = new JLabel("unneeded label :)");
 		bottom.add(addVar);
 		bottom.add(addEq);
 		
 		top.add(nodeTool);
-		top.add(wireTool);
+		//top.add(wireTool); // deprecated feature
 		top.add(deleteTool);
 		top.add(editTool);
+		top.add(evaluateTool);
 		//panel.add(label);
 		panel.addMouseListener(this);
 		panel.addMouseMotionListener(this);
@@ -198,6 +222,8 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			break;
 		case EDIT:
 			break;
+		case EVALUATE:
+			break;
 		}
 	}
 
@@ -232,6 +258,8 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			
 			break;
 		case EDIT:
+			break;
+		case EVALUATE:
 			break;
 		}
 	}
@@ -290,8 +318,13 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 				}
 				LinkedList<Edge> toRemove = new LinkedList<>();
 				for (Edge edge : Nodes.edges) {
-					if (edge.end1 == n || edge.end2 == n)
+					if (edge.end1 == n || edge.end2 == n) {
 						toRemove.add(edge);
+						if (n instanceof VariableNode) {
+							((EquationNode)edge.end2).setInvalid();
+							Main.print("setting invalid");
+						}
+					}
 				}
 				Nodes.edges.removeAll(toRemove);
 				repaint();

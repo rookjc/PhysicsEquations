@@ -1,0 +1,91 @@
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+
+public class EquationNode implements Node {
+	private static final Color VALID_COLOR = Color.LIGHT_GRAY;
+	private static final Color INVALID_COLOR = Color.MAGENTA;
+	
+	boolean valid;
+	private String label;
+	private Rectangle node;
+	private double x, y, w, h;
+	
+	public Equation equation;
+	
+	public EquationNode(String l, double x, double y, double h) {
+		valid = true; label = l; this.x = x; this.y = y; this.w = 0; this.h = h;
+	}
+
+	@Override
+	public void draw(Graphics g, FontMetrics fm) {
+		// Done only after text updated: if w is flagged at 0, find the real value using the fm provided here
+		if (w == 0) {
+			w = fm.stringWidth(label) + Main.scale * 0.5;
+			resize();
+		}
+		
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setColor(getColor());
+		g2.fill(node);
+		g2.setColor(Color.BLACK);
+		g2.drawString(label, (int)(node.getMinX() + Main.scale * 0.25),
+				(int)(node.getMinY() + (h - fm.getHeight()) / 2 + fm.getAscent()));
+	}
+	
+	public void resetWidth() { w = 0; }
+	
+	@Override
+	public void resize() {
+		node = new Rectangle((int) (x * Main.dimensions.getWidth()), (int) (y * Main.dimensions.getHeight()),
+				(int) w, (int) h);
+	}
+
+	@Override
+	public boolean contains(int x, int y) {
+		return node.contains(x, y);
+	}
+
+	@Override
+	public void move(int dx, int dy) {
+		node = new Rectangle((int) (x * Main.dimensions.getWidth() + dx), (int) (y * Main.dimensions.getHeight() + dy),
+				(int) w, (int) h);
+	}
+
+	@Override
+	public void finishMove() {
+		x = node.getMinX() / Main.dimensions.getWidth();
+		y = node.getMinY() / Main.dimensions.getHeight();
+	}
+
+	@Override
+	public int endpointX() {
+		return (int)node.getCenterX();
+	}
+	
+	@Override
+	public int endpointY() {
+		return (int)node.getCenterY();
+	}
+	
+	@Override
+	public Color getColor() {
+		return color;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
+	}
+	
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	public void setInvalid() {
+		valid = false;
+		color = 
+	}
+}

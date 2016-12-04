@@ -11,7 +11,7 @@ public class VariableNode implements Node {
 	private double x, y, r;
 	
 	public VariableNode(Color c, String n, String l, double x, double y, double r) {
-		color = c; name = n; label = l; value = "0"; this.x = x; this.y = y; this.r = r;
+		color = c; name = n; label = l; value = "?"; this.x = x; this.y = y; this.r = r;
 		resize();
 	}
 
