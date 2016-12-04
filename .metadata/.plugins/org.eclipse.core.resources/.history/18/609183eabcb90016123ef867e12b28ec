@@ -343,18 +343,6 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 						Main.scale * 30, Main.scale * 4, n);
 			}
 			break;
-		case EVALUATE:
-			n = getNode(e);
-			if (n != null && n instanceof VariableNode) {
-				Double result = Main.find(((VariableNode)n).getSymbol());
-				if (result == null)
-					JOptionPane.showMessageDialog(null, "Could not solve equation.",
-							"No Solution", JOptionPane.ERROR_MESSAGE);
-				else
-					JOptionPane.showMessageDialog(null, "Solution: " + result,
-							"Solution Found", JOptionPane.INFORMATION_MESSAGE);
-			}
-			break;
 		default:
 			break;
 		}

@@ -38,7 +38,7 @@ public class Main {
 		return "?";
 	}
 	
-	// Probably going to remain unused
+	// This should lead to the graph traversal I think
 	public static boolean canFind(String variable) {
 		return false;
 	}
@@ -68,7 +68,7 @@ public class Main {
 		
 	}
 	
-	public static Double find(String variable) {
+	public static double find(String variable) {
 		Set<Node> visited = new HashSet<>();
 		Stack<Node> stack = new Stack<>();
 		HashMap<String, Double> known = new HashMap<>();
@@ -83,7 +83,7 @@ public class Main {
 		visited.add(names.get(variable));
 		
 		// Just do a normal stack traversal. Doesn't work for anywhere near all cases, but time and stuff.
-		while (!stack.isEmpty() && !known.containsKey(variable)) {
+		while (!stack.isEmpty()) {
 			Node n = stack.pop();
 			if (n instanceof EquationNode) {
 				Set<String> unknowns = getUnknowns(((EquationNode)n).equation, known);
@@ -94,27 +94,18 @@ public class Main {
 					double value = solveFor(((EquationNode)n).equation, unknown);
 					known.put(unknown, value);
 				} else if (unknowns.size() > 1) {
-					stack.push(n);
 					for (String var : unknowns) {
 						if (!visited.contains(names.get(var))) {
 							stack.push(names.get(var));
-							visited.add(names.get(var));
+							visited.addAll(names.get(var));
 						}
 					}
 				}
 				
-			} else { // n is a VariableNode
-				// Realizing I forgot to ever set up adjacency lists for variable nodes, just going to search all edges every time!
-				for (Edge edge : NodeDisplay.Nodes.edges) {
-					if (edge.end1 == n && !visited.contains(edge.end2)) {
-						stack.push(edge.end2);
-						visited.add(edge.end2);
-					}
-				}
+			} else {
+				
 			}
 		}
-		
-		return known.containsKey(variable) ? known.get(variable) : null;
 	}
 	
 	public static Set<String> getUnknowns(Equation e, HashMap<String, Double> known) {
@@ -127,41 +118,6 @@ public class Main {
 	}
 	
 	public static double solveFor(Equation e, String var) {
-		if (e.left.variables.contains(var)) { // put the variable on the right for convenience
-			if (e.right.variables.contains(var)) {
-				print("Can't solve this yet!!!");
-				return 0;
-			}
-			e = e.flip();
-		}
-		double left = e.left.evaluate();
-		Expression right = e.right;
-		if (right instanceof Variable) {
-			return left; // has to be the one we're solving for, right?
-		} else {
-			BinaryExpression binExp = (BinaryExpression) right;
-			if (binExp instanceof Addition) {
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.left), binExp.right), var);
-			} else if (binExp instanceof Subtraction) {
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Addition(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Subtraction(binExp.left, new Constant(left)), binExp.right), var);
-			} else if (binExp instanceof Multiplication) {
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Division(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Division(new Constant(left), binExp.left), binExp.right), var);
-			} else { // Division, for sure for now
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Multiplication(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Division(binExp.left, new Constant(left)), binExp.right), var);
-			}
-			
-		}
+		return 0;
 	}
 }

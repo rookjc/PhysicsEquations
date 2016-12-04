@@ -10,13 +10,6 @@ public class Equation {
 		variables = new HashSet<>();
 	}
 	
-	public Equation(Expression l, Expression r) {
-		this();
-		left = l; right = r;
-		variables.addAll(l.variables);
-		variables.addAll(r.variables);
-	}
-	
 	// Parse string into equation. Return null if problem.
 	public static Equation parse(String s) {
 		s = s.replaceAll("\\s", "");

@@ -152,14 +152,14 @@ public class Main {
 					return solveFor(new Equation(new Subtraction(binExp.left, new Constant(left)), binExp.right), var);
 			} else if (binExp instanceof Multiplication) {
 				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Division(new Constant(left), binExp.right), binExp.left), var);
+					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.right), binExp.left), var);
 				else
-					return solveFor(new Equation(new Division(new Constant(left), binExp.left), binExp.right), var);
+					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.left), binExp.right), var);
 			} else { // Division, for sure for now
 				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Multiplication(new Constant(left), binExp.right), binExp.left), var);
+					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.right), binExp.left), var);
 				else
-					return solveFor(new Equation(new Division(binExp.left, new Constant(left)), binExp.right), var);
+					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.left), binExp.right), var);
 			}
 			
 		}

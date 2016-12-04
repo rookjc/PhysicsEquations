@@ -138,30 +138,6 @@ public class Main {
 		Expression right = e.right;
 		if (right instanceof Variable) {
 			return left; // has to be the one we're solving for, right?
-		} else {
-			BinaryExpression binExp = (BinaryExpression) right;
-			if (binExp instanceof Addition) {
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.left), binExp.right), var);
-			} else if (binExp instanceof Subtraction) {
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Addition(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Subtraction(binExp.left, new Constant(left)), binExp.right), var);
-			} else if (binExp instanceof Multiplication) {
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Division(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Division(new Constant(left), binExp.left), binExp.right), var);
-			} else { // Division, for sure for now
-				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Multiplication(new Constant(left), binExp.right), binExp.left), var);
-				else
-					return solveFor(new Equation(new Division(binExp.left, new Constant(left)), binExp.right), var);
-			}
-			
 		}
 	}
 }

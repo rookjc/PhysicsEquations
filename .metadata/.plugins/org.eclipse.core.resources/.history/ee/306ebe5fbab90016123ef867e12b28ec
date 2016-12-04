@@ -12,7 +12,8 @@ public class Variable extends Expression {
 		if (isKnown()) {
 			return Main.names.get(symbol).getValue();
 		} else {
-			return 0; // Should never happen
+			return 0;
+			// Should start trying to find it here...
 		}
 	}
 	
