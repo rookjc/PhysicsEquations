@@ -3,11 +3,14 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
 public class Main {
 	public static HashMap<String, VariableNode> names = new HashMap<>();
+	
+	public static int printN = 0;
 	
 	public static int scale = 40;
 	
@@ -22,6 +25,8 @@ public class Main {
 	
 	// Easy print method for debugging
 	public static void print(Object... obs) {
+		if (printN++ > 50)
+			return;
 		for (Object ob : obs)
 			System.out.println(ob);
 	}
@@ -36,11 +41,6 @@ public class Main {
 				return c + "";
 		}
 		return "?";
-	}
-	
-	// Probably going to remain unused
-	public static boolean canFind(String variable) {
-		return false;
 	}
 	
 	// Make the edges coming out of an equation representative of what 
@@ -70,7 +70,7 @@ public class Main {
 	
 	public static Double find(String variable) {
 		Set<Node> visited = new HashSet<>();
-		Stack<Node> stack = new Stack<>();
+		Queue<Node> queue = new LinkedList<>();
 		HashMap<String, Double> known = new HashMap<>();
 		
 		// Go ahead and fill in the 'constant' variables
@@ -79,35 +79,36 @@ public class Main {
 				known.put(((VariableNode)n).getSymbol(), ((VariableNode)n).getValue());
 		}
 		
-		stack.push(names.get(variable));
+		queue.add(names.get(variable));
 		visited.add(names.get(variable));
 		
-		// Just do a normal stack traversal. Doesn't work for anywhere near all cases, but time and stuff.
-		while (!stack.isEmpty() && !known.containsKey(variable)) {
-			Node n = stack.pop();
+		// Just do a normal queue traversal. Doesn't work for anywhere near all cases, but time and stuff.
+		while (!queue.isEmpty() && !known.containsKey(variable)) {
+			Node n = queue.remove();
 			if (n instanceof EquationNode) {
 				Set<String> unknowns = getUnknowns(((EquationNode)n).equation, known);
 				if (unknowns.size() == 1) {
 					String unknown = "";
 					for (String one : unknowns) // Blanking on how to do this right...
 						unknown = one;
-					double value = solveFor(((EquationNode)n).equation, unknown);
+					double value = solveFor(((EquationNode)n).equation, unknown, known);
 					known.put(unknown, value);
 				} else if (unknowns.size() > 1) {
-					stack.push(n);
 					for (String var : unknowns) {
 						if (!visited.contains(names.get(var))) {
-							stack.push(names.get(var));
+							queue.add(names.get(var));
 							visited.add(names.get(var));
 						}
 					}
+					if (!queue.isEmpty())
+						queue.add(n);
 				}
 				
 			} else { // n is a VariableNode
 				// Realizing I forgot to ever set up adjacency lists for variable nodes, just going to search all edges every time!
 				for (Edge edge : NodeDisplay.Nodes.edges) {
 					if (edge.end1 == n && !visited.contains(edge.end2)) {
-						stack.push(edge.end2);
+						queue.add(edge.end2);
 						visited.add(edge.end2);
 					}
 				}
@@ -126,7 +127,7 @@ public class Main {
 		return result;
 	}
 	
-	public static double solveFor(Equation e, String var) {
+	public static double solveFor(Equation e, String var, HashMap<String, Double> known) {
 		if (e.left.variables.contains(var)) { // put the variable on the right for convenience
 			if (e.right.variables.contains(var)) {
 				print("Can't solve this yet!!!");
@@ -134,7 +135,7 @@ public class Main {
 			}
 			e = e.flip();
 		}
-		double left = e.left.evaluate();
+		double left = e.left.evaluate(known);
 		Expression right = e.right;
 		if (right instanceof Variable) {
 			return left; // has to be the one we're solving for, right?
@@ -142,24 +143,24 @@ public class Main {
 			BinaryExpression binExp = (BinaryExpression) right;
 			if (binExp instanceof Addition) {
 				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.right), binExp.left), var);
+					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.right), binExp.left), var, known);
 				else
-					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.left), binExp.right), var);
+					return solveFor(new Equation(new Subtraction(new Constant(left), binExp.left), binExp.right), var, known);
 			} else if (binExp instanceof Subtraction) {
 				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Addition(new Constant(left), binExp.right), binExp.left), var);
+					return solveFor(new Equation(new Addition(new Constant(left), binExp.right), binExp.left), var, known);
 				else
-					return solveFor(new Equation(new Subtraction(binExp.left, new Constant(left)), binExp.right), var);
+					return solveFor(new Equation(new Subtraction(binExp.left, new Constant(left)), binExp.right), var, known);
 			} else if (binExp instanceof Multiplication) {
 				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Division(new Constant(left), binExp.right), binExp.left), var);
+					return solveFor(new Equation(new Division(new Constant(left), binExp.right), binExp.left), var, known);
 				else
-					return solveFor(new Equation(new Division(new Constant(left), binExp.left), binExp.right), var);
+					return solveFor(new Equation(new Division(new Constant(left), binExp.left), binExp.right), var, known);
 			} else { // Division, for sure for now
 				if (binExp.left.variables.contains(var))
-					return solveFor(new Equation(new Multiplication(new Constant(left), binExp.right), binExp.left), var);
+					return solveFor(new Equation(new Multiplication(new Constant(left), binExp.right), binExp.left), var, known);
 				else
-					return solveFor(new Equation(new Division(binExp.left, new Constant(left)), binExp.right), var);
+					return solveFor(new Equation(new Division(binExp.left, new Constant(left)), binExp.right), var, known);
 			}
 			
 		}

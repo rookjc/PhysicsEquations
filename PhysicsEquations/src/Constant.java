@@ -1,13 +1,10 @@
+import java.util.HashMap;
 
 public class Constant extends Expression {
 	double value;
-	
+
 	@Override
-	public boolean canEvaluate() {
-		return true;
-	}
-	@Override
-	public double evaluate() {
+	public double evaluate(HashMap<String, Double> values) {
 		return value;
 	}
 	

@@ -1,4 +1,5 @@
 import java.util.EmptyStackException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -6,11 +7,7 @@ import java.util.Stack;
 public class Expression {
 	
 	// To be overridden
-	public boolean canEvaluate() {
-		return false;
-	}
-	// To be overridden
-	public double evaluate() {
+	public double evaluate(HashMap<String, Double> values) {
 		return 0;
 	}
 	
