@@ -95,4 +95,25 @@ public class EquationNode implements Node {
 	public boolean isValid() {
 		return valid;
 	}
+	
+	// Returns true iff the equation is valid, and updates the graphic if valid or !onlyIfValid
+	public boolean updateEquation(String raw, boolean onlyIfValid) {
+		Equation eq = Equation.parse(raw);
+		if (eq != null || !onlyIfValid) {
+			this.resetWidth();
+			this.setLabel(raw);
+			if (eq != null)
+				this.setValid();
+			else
+				this.setInvalid();
+			this.equation = eq;
+			Main.updateEdges(this, eq);
+		}
+		return eq != null;
+	}
+	
+	@Override
+	public String toString() {
+		return "eq " + label + " " + x + " " + y;
+	}
 }

@@ -55,9 +55,10 @@ public class VariableNode implements Node {
 		y = node.getMinY() / Main.dimensions.getHeight();
 	}
 	
+	// Formats data as a string (used by NodeLoader)
 	@Override
 	public String toString() {
-		return x + ", " + y;
+		return "var " + name + " " + label + " " + x + " " + y + " " + value;
 	}
 
 	@Override

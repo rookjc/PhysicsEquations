@@ -13,7 +13,6 @@
 <fullyQualifiedTypeName name="java.awt.event.MouseMotionListener"/>
 <fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
 <fullyQualifiedTypeName name="java.awt.Rectangle"/>
-<fullyQualifiedTypeName name="java.awt.Point"/>
 <fullyQualifiedTypeName name="java.awt.Graphics"/>
 <fullyQualifiedTypeName name="java.awt.Graphics2D"/>
 <fullyQualifiedTypeName name="java.awt.BasicStroke"/>
@@ -36,8 +35,12 @@
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="NodeDisplay"/>
 <fullyQualifiedTypeName name="java.util.Stack"/>
-<fullyQualifiedTypeName name="NodeDisplay.Nodes"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.util.Queue"/>
 <fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.util.Scanner"/>
+<fullyQualifiedTypeName name="java.io.PrintWriter"/>
+<fullyQualifiedTypeName name="NodeDisplay.Nodes"/>
+<fullyQualifiedTypeName name="java.awt.Point"/>
 </qualifiedTypeNameHistroy>

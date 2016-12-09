@@ -1,0 +1,91 @@
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+// Represents entering and parsing text, for the specific cases of editing variable / equation nodes
+public class TextEntry extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private static Pattern varLabelMatch = Pattern.compile("(.*)\\(([a-z|A-Z])\\)\\s*\\{([\\?0-9]+\\.?[0-9]*)\\}");
+	
+	public TextEntry(String title, int sizeX, int sizeY, Node subject) {
+		createComponents(this, subject);
+		setSize(sizeX, sizeY);
+		setTitle(title);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setAlwaysOnTop(true);
+		setVisible(true);
+	}
+	
+	private JButton OK;
+	private JTextField input;
+	
+	private void createComponents(JFrame frame, Node subject) {
+		JPanel bottom = new JPanel();
+		
+		OK = new JButton("OK");
+		OK.setFont(Main.font);
+		input = new JTextField("whatever");
+		input.setFont(Main.font);
+		input.setColumns(25);
+		input.setText(subject.getLabel());
+		
+		OK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (subject instanceof VariableNode) {
+					Matcher m = varLabelMatch.matcher(input.getText());
+					if (!m.matches()) {
+						JOptionPane.showMessageDialog(null, "Parse error.", "Parse Error", JOptionPane.ERROR_MESSAGE);
+					} else {
+						String oldName = ((VariableNode)subject).getSymbol();
+						String newName = m.group(2);
+						if (Main.names.containsKey(newName) && !newName.equals(oldName)) {
+							JOptionPane.showMessageDialog(null, "Already a variable called '" + newName + "'",
+									"Name Already Exists", JOptionPane.ERROR_MESSAGE);
+						} else {
+							((VariableNode)subject).setName(m.group(1));
+							((VariableNode)subject).setLabel(m.group(2));
+							((VariableNode)subject).setValue(m.group(3));
+							frame.dispose();
+							Main.names.remove(oldName);
+							Main.names.put(newName, (VariableNode)subject);
+							Main.window.repaint();
+						}
+					}
+				} else {
+					Equation eq = Equation.parse(input.getText());
+					if (((EquationNode)subject).updateEquation(input.getText(), true)) {
+						JOptionPane.showMessageDialog(null, "Parse error.", "Parse Error", JOptionPane.ERROR_MESSAGE);
+					} else {
+						((EquationNode)subject).resetWidth();
+						((EquationNode)subject).setLabel(input.getText());
+						((EquationNode)subject).setValid();
+						((EquationNode)subject).equation = eq;
+						
+						// Change the equation's connections to be representative:
+						Main.updateEdges((EquationNode)subject, eq);
+						
+						frame.dispose();
+						Main.window.repaint();
+						Main.window.repaint(); // Needed twice, since the EquationNode's size changes the first time
+					}
+				} // end main if
+			} // end actionPerformed
+		});
+		
+		bottom.add(input);
+		bottom.add(OK);
+		bottom.setLayout(new GridBagLayout());
+		add(bottom, BorderLayout.CENTER);
+	}
+	
+}

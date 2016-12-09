@@ -1,0 +1,33 @@
+import java.awt.Point;
+import java.io.File;
+import java.util.Scanner;
+
+/* Data stored as text:
+variable node: "var", name, label, local x, local y, value (string, could be '?')
+equation node: 
+*/
+
+public class NodeLoader {
+	public static void load(String name, Point origin) {
+		Scanner in = null;
+		try {
+			in = new Scanner(new File(name));
+			while (in.hasNext()) {
+				switch (in.next()) {
+				case "var": // variable node
+					VariableNode newNode = new VariableNode(Main.randomColor(), in.next(), in.next(),
+							in.nextDouble() + origin.getX(), in.nextDouble() + origin.getY(), Main.scale);
+					newNode.setValue(in.next());
+					NodeDisplay.Nodes.nodes.add(newNode);
+					break;
+				default:
+					break;
+				}
+			}
+		} catch (Exception e) {
+			Main.print(e);
+		} finally {
+			in.close();
+		}
+	}
+}

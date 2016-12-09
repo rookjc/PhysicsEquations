@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;PhysicsEquations/savefile&apos; to &apos;piston_problem&apos;" description="Rename resource &apos;savefile&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="savefile" name="piston_problem" stamp="1481318679875" updateReferences="true"/>
+</session>

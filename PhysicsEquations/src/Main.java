@@ -45,7 +45,7 @@ public class Main {
 	
 	// Make the edges coming out of an equation representative of what 
 	public static void updateEdges(EquationNode n, Equation e) {
-		Set<String> needed = new HashSet<>(e.variables);
+		Set<String> needed = e == null ? new HashSet<>() : new HashSet<>(e.variables);
 		Set<Edge> toRemove = new HashSet<>();
 		
 		for (Edge edge : NodeDisplay.Nodes.edges) {

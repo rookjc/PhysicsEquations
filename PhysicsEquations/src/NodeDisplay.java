@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -57,6 +58,9 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 	
 	private JButton addVar;
 	private JButton addEq;
+	private JButton save;
+	private JButton load;
+	private JButton clear;
 	private JButton wireTool;
 	private JButton nodeTool;
 	private JButton deleteTool;
@@ -80,6 +84,9 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		JPanel panel = new Nodes();
 		addVar = new JButton("Add Variable"); addVar.setFont(Main.font);
 		addEq = new JButton("Add Equation"); addEq.setFont(Main.font);
+		save = new JButton("Save"); save.setFont(Main.font);
+		load = new JButton("Load"); load.setFont(Main.font);
+		clear = new JButton("Clear"); clear.setFont(Main.font);
 		wireTool = new JButton("Wiring Tool"); wireTool.setFont(Main.font);
 		nodeTool = new JButton("Move Tool"); nodeTool.setFont(Main.font);
 		deleteTool = new JButton("Delete Tool"); deleteTool.setFont(Main.font);
@@ -103,6 +110,29 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 			public void actionPerformed(ActionEvent event) {
 				Nodes.nodes.add(new EquationNode("0 = 0",
 						Math.random() * 0.9, Math.random() * 0.7, Main.scale * 1.5));
+				repaint();
+			}
+		});
+		
+		save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				NodeLoader.save("savefile", new Point());
+			}
+		});
+		
+		load.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				NodeLoader.load("savefile", new Point());
+			}
+		});
+		
+		clear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Nodes.nodes.clear();
+				Nodes.edges.clear();
 				repaint();
 			}
 		});
@@ -162,6 +192,9 @@ public class NodeDisplay extends JFrame implements MouseListener, MouseMotionLis
 		//label = new JLabel("unneeded label :)");
 		bottom.add(addVar);
 		bottom.add(addEq);
+		bottom.add(save);
+		bottom.add(load);
+		bottom.add(clear);
 		
 		top.add(nodeTool);
 		//top.add(wireTool); // deprecated feature
